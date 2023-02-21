@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15.1
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_DB=ipgeo
+    ports:
+      - 5432:5432
+    volumes: 
+      - db:/var/lib/postgresql/data
+    networks:
+      - local
+
+  ipgeo-ws:
+    build: /
+    restart: always
+    container_name: sprboot_ipgeo-ws
+    ports:
+      - 8080:8080
+    working_dir: /opt/app
+    depends_on:
+      - postgres-db
+    networks:
+      - local
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  local:
+    driver: bridge
